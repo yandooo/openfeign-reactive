@@ -1,0 +1,230 @@
+/*
+ *   The MIT License (MIT)
+ *
+ *   Copyright (c) 2019 Léo Montana and Contributors
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ *   documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ *   rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ *   persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ *   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ *   BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ *   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+buildscript {
+    repositories {
+        maven { url "https://repo.spring.io/plugins-release"}
+        maven { url "https://plugins.gradle.org/m2/"}
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7',
+                'io.spring.gradle:spring-io-plugin:0.0.4.RELEASE',
+                'com.diffplug.spotless:spotless-plugin-gradle:3.24.2'
+    }
+}
+
+
+ext {
+
+    GRADLE_SCRIPT_DIR = "${rootProject.projectDir}/gradle"
+
+    PROJECT_GROUP_ID = "toscana"
+    PROJECT_ARTIFACT_ID = "openfeign-async"
+    PROJECT_SUMMARY = "Asynchronous OpenFeign Client Library"
+    PROJECT_VERSION = "1.2.2"
+
+    SOURCE_COMPATIBILITY = "1.8"
+    TARGET_COMPATIBILITY = "1.8"
+
+    PLUGIN_ARTIFACTORY_BUILD_EXTRACTOR = "3.1.1"
+    PLUGIN_GRADLE_COBERTURA_VERSION = "2.2.8"
+
+
+    LIB_FEIGN_CORE = "10.+"
+    LIB_SPRING_FRAMEWORK_WEB = "5.+"
+    LIB_SPRING_WEB_FLUX = "5.+"
+    LIB_RESILIENCE4J = "0.8.2"
+
+    LIB_FEIGN_JACKSON = "9.+"
+    LIB_FEIGN_SLF4J = "9.+"
+    LIB_FEIGN_FORM = "3.8.0"
+    LIB_REACTOR_CORE = "3.2.12.RELEASE"
+    LIB_REACTOR_NETTY = "0.8.11.RELEASE"
+    LIB_LOGBACK = "1.2.3"
+    LIB_SLF4J = "1.7.21"
+    LIB_JUNIT = "4.12"
+    LIB_ASSERTJ = "3.4.1"
+    LIB_TOMAKEHURST = "2.24.+"
+    LIB_JACKSON_ANNOTATIONS = "2.9.+"
+    LIB_JACKSON_DATATYPE = "2.9.+"
+    LIB_LOMBOK = "1.16.12"
+    LIB_BEAN_TESTER = "1.0.0"
+    LIB_EQUALS_VERIFIER = "2.2"
+}
+
+apply from: "$GRADLE_SCRIPT_DIR/setup.gradle"
+apply from: "$GRADLE_SCRIPT_DIR/ide.gradle"
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+configure(subprojects) { project ->
+    group = 'feign.reactive'
+
+    apply plugin: 'propdeps'
+    apply plugin: 'java'
+    apply plugin: "com.diffplug.gradle.spotless"
+    apply from: "${GRADLE_SCRIPT_DIR}/ide.gradle"
+
+    [compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:varargs",
+                                                             "-Xlint:cast",
+                                                             "-Xlint:classfile",
+                                                             "-Xlint:dep-ann",
+                                                             "-Xlint:divzero",
+                                                             "-Xlint:empty",
+                                                             "-Xlint:finally",
+                                                             "-Xlint:overrides",
+                                                             "-Xlint:path",
+                                                             "-Xlint:processing",
+                                                             "-Xlint:static",
+                                                             "-Xlint:try",
+                                                             "-Xlint:deprecation",
+                                                             "-Xlint:unchecked",
+                                                             "-Xlint:-serial", 
+                                                             "-Xlint:-options",     
+                                                             "-Xlint:-fallthrough", 
+                                                             "-Xlint:-rawtypes"     
+    ]
+
+    compileJava {
+        sourceCompatibility = SOURCE_COMPATIBILITY
+        targetCompatibility = TARGET_COMPATIBILITY
+    }
+
+    compileTestJava {
+        sourceCompatibility = SOURCE_COMPATIBILITY
+        targetCompatibility = TARGET_COMPATIBILITY
+    }
+
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+    sourceSets.test.resources.srcDirs = ["src/test/resources", "src/test/java"]
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        annotationProcessor "org.projectlombok:lombok:$LIB_LOMBOK"
+    }
+}
+
+project('http-reactive-client') {
+    description = 'Feign reactive client definition'
+
+    dependencies {
+        implementation group: 'io.github.openfeign', name: 'feign-core', version: "$LIB_FEIGN_CORE"
+    }
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'openfeign-http-reactive-client',
+                    'Implementation-Version': version,
+                    'Automatic-Module-Name': 'openfeign.reactive.http.reactive.client'
+        }
+    }
+}
+
+project('http-spring-async') {
+    description = 'Spring AsyncRestTemplate implementation'
+
+    dependencies {
+        implementation project(':http-reactive-client')
+        implementation group: 'io.github.openfeign', name: 'feign-core', version: "$LIB_FEIGN_CORE"
+        implementation group: 'org.springframework', name: 'spring-web', version: "$LIB_SPRING_FRAMEWORK_WEB"
+    }
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'openfeign-http-spring-netty',
+                    'Implementation-Version': version,
+                    'Automatic-Module-Name': 'openfeign.reactive.http.spring.netty'
+        }
+    }
+}
+
+
+project('http-reactor-netty') {
+    description = 'Reactor Netty implementation'
+
+    dependencies {
+        implementation project(':http-reactive-client')
+        implementation group: 'io.github.openfeign', name: 'feign-core', version: "$LIB_FEIGN_CORE"
+        implementation "io.projectreactor.netty:reactor-netty:$LIB_REACTOR_NETTY"
+    }
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'openfeign-http-reactor-netty',
+                    'Implementation-Version': version,
+                    'Automatic-Module-Name': 'openfeign.reactive.http.reactor.netty'
+        }
+    }
+
+}
+
+project('openfeign-reactive-core') {
+    description = 'Openfeign reactive implemenation'
+
+    dependencies {
+        implementation project(':http-reactive-client')
+        implementation group: 'io.github.openfeign', name: 'feign-core', version: "$LIB_FEIGN_CORE"
+        implementation group: 'io.github.robwin', name: 'javaslang-circuitbreaker', version: "$LIB_RESILIENCE4J"
+    }
+
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'openfeign-reactive',
+                    'Implementation-Version': version,
+                    'Automatic-Module-Name': 'openfeign.reactive'
+        }
+    }
+}
+
+project('openfeign-reactive-test') {
+    description = 'Openfeign reactive implemenation'
+
+    dependencies {
+        compile project(':openfeign-reactive-core')
+        compile project(':http-spring-async')
+        compile project(':http-reactor-netty')
+
+        testCompile group: 'junit', name: 'junit', version: "$LIB_JUNIT"
+        testCompile group: 'org.assertj', name: 'assertj-core', version: "$LIB_ASSERTJ"
+        testCompile group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: "$LIB_TOMAKEHURST"
+        testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "$LIB_JACKSON_ANNOTATIONS"
+        testCompile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: "$LIB_JACKSON_DATATYPE"
+        testCompile group: 'io.github.openfeign', name: 'feign-jackson', version: "$LIB_FEIGN_JACKSON"
+        testCompile group: 'io.github.openfeign', name: 'feign-slf4j', version: "$LIB_FEIGN_SLF4J"
+        testCompile group: 'io.github.openfeign.form', name: 'feign-form', version: "$LIB_FEIGN_FORM"
+        testCompile group: 'ch.qos.logback', name: 'logback-classic', version: "$LIB_LOGBACK"
+        testCompile group: "org.force66", name: "BeanTester", version: "$LIB_BEAN_TESTER"
+        testCompile group: "nl.jqno.equalsverifier", name: "equalsverifier", version: "$LIB_EQUALS_VERIFIER"
+    }
+
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'openfeign-reactive',
+                    'Implementation-Version': version,
+                    'Automatic-Module-Name': 'openfeign.reactive'
+        }
+    }
+
+}
+
