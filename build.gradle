@@ -26,7 +26,8 @@ buildscript {
     dependencies {
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7',
                 'io.spring.gradle:spring-io-plugin:0.0.4.RELEASE',
-                'com.diffplug.spotless:spotless-plugin-gradle:3.24.2'
+                'com.diffplug.spotless:spotless-plugin-gradle:3.24.2',
+                'io.freefair.gradle:lombok-plugin:4.0.2'
     }
 }
 
@@ -82,7 +83,8 @@ configure(subprojects) { project ->
 
     apply plugin: 'propdeps'
     apply plugin: 'java'
-    apply plugin: "com.diffplug.gradle.spotless"
+    apply plugin: 'com.diffplug.gradle.spotless'
+    apply plugin: 'io.freefair.lombok'
     apply from: "${GRADLE_SCRIPT_DIR}/ide.gradle"
 
     [compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:varargs",
@@ -124,7 +126,6 @@ configure(subprojects) { project ->
     }
 
     dependencies {
-        annotationProcessor "org.projectlombok:lombok:$LIB_LOMBOK"
     }
 }
 
