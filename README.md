@@ -1,4 +1,4 @@
-# OpenFeign-async
+# OpenFeign-Reactive
 
 Non-blocking Feign HTTP Client port.
 This project leverages Feign concise syntax for declarative REST API definitions.
@@ -19,7 +19,7 @@ In the project gradle
 ```gradle
     compile group: 'openfeign-reactive', name: 'openfeign-reactive-core', version: "+"
 
-    // use Jackson encoder / decoder
+    // use Jackson encoder / decoder and SLF4j logging
     compile group: 'io.github.openfeign', name: 'feign-jackson', version: "$LIB_FEIGN"
     compile group: 'io.github.openfeign', name: 'feign-slf4j', version: "$LIB_FEIGN"
         
