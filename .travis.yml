@@ -1,7 +1,8 @@
 language: java
-dist: trusty
+#dist: trusty
 jdk:
-  - oraclejdk8
+#  - oraclejdk8
+  - openjdk8
 before_install:
  - chmod +x gradlew
 after_success:
