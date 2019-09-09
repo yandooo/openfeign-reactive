@@ -20,11 +20,11 @@ In the project gradle
     compile group: 'openfeign-reactive', name: 'openfeign-reactive-core', version: "+"
 
     // use Jackson encoder / decoder and SLF4j logging
-    compile group: 'io.github.openfeign', name: 'feign-jackson', version: "$LIB_FEIGN"
-    compile group: 'io.github.openfeign', name: 'feign-slf4j', version: "$LIB_FEIGN"
+    compile group: 'io.github.openfeign', name: 'feign-jackson', version: "10.+"
+    compile group: 'io.github.openfeign', name: 'feign-slf4j', version: "10.+"
         
     // SpringFramework AsyncRestTemplate. Make sure netty is compatible with your Spring version    
-    compile group: 'io.netty', name: 'netty-all', version: "$LIB_NETTY_ALL"
+    compile group: 'io.netty', name: 'netty-all', version: "4.+"
     compile group: 'openfeign-reactive', name: 'http-spring-async', version: "+"
     
     // Reactor Netty
