@@ -14,7 +14,7 @@ So the library is refactored to incorporate some ideas from other open-source ma
 
 ## Usage
 
-In the project gradle
+In a project gradle build
 
 ```gradle
     compile group: 'openfeign-reactive', name: 'openfeign-reactive-core', version: "+"
