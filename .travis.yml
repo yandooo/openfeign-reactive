@@ -1,9 +1,10 @@
 language: java
+install: true
 dist: trusty
 jdk:
   - oraclejdk8
 #  - openjdk8
 before_install:
  - chmod +x gradlew
-after_success:
+script:
   - ./gradlew build -x check --info
