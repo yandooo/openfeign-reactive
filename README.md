@@ -1,4 +1,4 @@
-# OpenFeign-Reactive
+# OpenFeign-Reactive [![Build Status](https://travis-ci.org/yandooo/openfeign-reactive.svg?branch=master)](https://travis-ci.org/yandooo/openfeign-reactive)
 
 Non-blocking Feign HTTP Client port.
 This project leverages Feign concise syntax for declarative REST API definitions.
