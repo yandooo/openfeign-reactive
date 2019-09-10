@@ -202,9 +202,9 @@ project('openfeign-reactive-test') {
     description = 'Openfeign reactive implemenation'
 
     dependencies {
-        compile project(':openfeign-reactive-core')
-        compile project(':http-spring-async')
-        compile project(':http-reactor-netty')
+        implementation project(':openfeign-reactive-core')
+        implementation project(':http-spring-async')
+        implementation project(':http-reactor-netty')
 
         testCompile group: 'junit', name: 'junit', version: "$LIB_JUNIT"
         testCompile group: 'org.assertj', name: 'assertj-core', version: "$LIB_ASSERTJ"
