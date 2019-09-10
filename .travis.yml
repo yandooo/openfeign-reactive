@@ -6,4 +6,4 @@ jdk:
 before_install:
  - chmod +x gradlew
 after_success:
-  - ./gradlew --info
+  - ./gradlew build -x check --info
